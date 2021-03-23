@@ -2,6 +2,7 @@ package org.easydarwin.sw;
 
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -28,7 +29,7 @@ public class TxtOverlay {
 
     public static TxtOverlay getInstance() {
         if(instance == null) {
-            throw new IllegalArgumentException("please call install in your application!");
+            instance = new TxtOverlay(null);
         }
         return instance;
     }
@@ -59,11 +60,18 @@ public class TxtOverlay {
     }
 
     public void init(int width, int height) {
-        File youyuan = context.getFileStreamPath("SIMYOU.ttf");
-        if (!youyuan.exists()){
-            throw new IllegalArgumentException("the font file must be exists,please call install before!");
+//        if (context != null) {
+//            File youyuan = context.getFileStreamPath("SIMYOU.ttf");
+//            if (!youyuan.exists()) {
+//                throw new IllegalArgumentException("the font file must be exists,please call install before!");
+//            }
+//        }
+        File fontPath = new File("/system/fonts/DroidSans-Bold.ttf");
+        if (!fontPath.exists()) {
+            Log.e("TxtOverlay", "the font file must be exists!");
+            return;
         }
-        ctx = txtOverlayInit(width, height,youyuan.getAbsolutePath());
+        ctx = txtOverlayInit(width, height, fontPath.getAbsolutePath());
     }
 
     public void overlay(byte[] data,
@@ -74,6 +82,8 @@ public class TxtOverlay {
 //                + " [out]";
 //        if (ctx == 0) throw new RuntimeException("init should be called at first!");
         if (ctx == 0) return;
+        int len = txt.length();
+        txt = txt.substring(0, 11) + txt.substring(len - 8); //删除字符串的中文星期
         txtOverlay(ctx, data, txt);
     }
 
