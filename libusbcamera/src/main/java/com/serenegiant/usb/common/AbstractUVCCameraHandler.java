@@ -223,7 +223,7 @@ public abstract class AbstractUVCCameraHandler extends Handler {
                     // while preview is still running.
                     // therefore this method will take a time to execute
                     try {
-                        thread.mSync.wait();
+                        thread.mSync.wait(5000);
                     } catch (final InterruptedException e) {
                     }
                 }
