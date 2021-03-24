@@ -137,20 +137,30 @@ public class H264EncodeConsumer extends Thread {
         }
         // 休眠200ms，等待音频线程开启
         // 否则视频第一秒会卡住
-        try {
-            Thread.sleep(200);
-        } catch (InterruptedException e1) {
-            e1.printStackTrace();
-        }
+//        try {
+//            Thread.sleep(200);
+//        } catch (InterruptedException e1) {
+//            e1.printStackTrace();
+//        }
 
         // 如果编码器没有启动或者没有图像数据，线程阻塞等待
         while (!isExit) {
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e1) {
+                e1.printStackTrace();
+            }
             MediaCodec.BufferInfo bufferInfo = new MediaCodec.BufferInfo();
             int outputBufferIndex = 0;
             byte[] mPpsSps = new byte[0];
             byte[] h264 = new byte[mWidth * mHeight];
             do {
-                outputBufferIndex = mMediaCodec.dequeueOutputBuffer(bufferInfo, 10000);
+                try {
+                    outputBufferIndex = mMediaCodec.dequeueOutputBuffer(bufferInfo, 10000);
+                } catch (IllegalStateException ex){
+                    ex.printStackTrace();
+                    break;
+                }
                 if (outputBufferIndex == MediaCodec.INFO_TRY_AGAIN_LATER) {
                     // no output available yet
                 } else if (outputBufferIndex == MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED) {
